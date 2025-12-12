@@ -54,14 +54,16 @@ function App() {
       };
 
       const requestBody = {
-        model: "gpt-5-mini",
+        model: "gpt-4.1-mini",
         messages: [
           {
             role: "system",
             content: "Answer in Korean"
           },
           initMessage
-        ]
+        ],
+        "max_tokens": 4096,
+        "temperature": 0.5
       };
 
       const apiUrl = 'https://gms.ssafy.io/gmsapi/api.openai.com/v1/chat/completions';
