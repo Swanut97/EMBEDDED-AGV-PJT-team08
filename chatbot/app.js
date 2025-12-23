@@ -54,16 +54,14 @@ function App() {
       };
 
       const requestBody = {
-        model: "gpt-4.1-mini",
+        model: "gpt-5-mini",
         messages: [
           {
             role: "system",
             content: "Answer in Korean"
           },
           initMessage
-        ],
-        "max_tokens": 4096,
-        "temperature": 0.5
+        ]
       };
 
       const apiUrl = 'https://gms.ssafy.io/gmsapi/api.openai.com/v1/chat/completions';
@@ -227,109 +225,66 @@ function App() {
     { className: 'min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4' },
     React.createElement(
       'div',
-      { className: 'max-w-4xl mx-auto' },
+      { className: 'max-w-4xl mx-auto h-[calc(100vh-2rem)] flex flex-col' },
       React.createElement(
         'div',
-        { className: 'bg-white rounded-lg shadow-xl overflow-hidden' },
+        { className: 'bg-white rounded-lg shadow-xl overflow-hidden flex flex-col flex-1' },
         
         // 헤더
         React.createElement(
           'div',
           { className: 'bg-indigo-600 text-white p-6' },
           React.createElement(
-            'h1',
-            { className: 'text-2xl font-bold flex items-center gap-2' },
-            '🔑 LLM 대화 기록 테스트'
-          ),
-          React.createElement(
-            'p',
-            { className: 'text-indigo-200 mt-2' },
-            '이전 대화를 기억하는지 확인해보세요'
-          ),
-          
-          // 탭 메뉴
-          React.createElement(
             'div',
-            { className: 'flex gap-4 mt-4' },
+            { className: 'flex items-center justify-between' },
             React.createElement(
-              'button',
-              {
-                onClick: () => setActiveTab('chat'),
-                className: `px-4 py-2 rounded-lg font-semibold transition ${
-                  activeTab === 'chat'
-                    ? 'bg-white text-indigo-600'
-                    : 'bg-indigo-700 text-white hover:bg-indigo-800'
-                }`
-              },
-              '💬 채팅'
+              'h1',
+              { className: 'text-2xl font-bold flex items-center gap-2' },
+              '🍺 주정뱅이 챗봇'
             ),
+            
+            // 우측 상단 컨트롤
             React.createElement(
-              'button',
-              {
-                onClick: () => setActiveTab('logs'),
-                className: `px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 ${
-                  activeTab === 'logs'
-                    ? 'bg-white text-indigo-600'
-                    : 'bg-indigo-700 text-white hover:bg-indigo-800'
-                }`
-              },
-              `📋 로그 (${logs.length})`
+              'div',
+              { className: 'flex items-center gap-4' },
+              
+              // API 키 상태 아이콘
+              configLoaded && (
+                apiKey && apiKey !== 'YOUR_API_KEY_HERE'
+                  ? React.createElement(
+                      'div',
+                      { className: 'flex items-center gap-2 bg-green-500 px-3 py-1 rounded-lg' },
+                      React.createElement('span', { className: 'text-lg' }, '✓'),
+                      React.createElement('span', { className: 'text-sm font-semibold' }, 'API 연결됨')
+                    )
+                  : React.createElement(
+                      'div',
+                      { className: 'flex items-center gap-2 bg-red-500 px-3 py-1 rounded-lg' },
+                      React.createElement('span', { className: 'text-lg' }, '✕'),
+                      React.createElement('span', { className: 'text-sm font-semibold' }, 'API 미연결')
+                    )
+              ),
+              
+              // 토글 버튼
+              React.createElement(
+                'button',
+                {
+                  onClick: () => setActiveTab(activeTab === 'chat' ? 'logs' : 'chat'),
+                  className: 'px-4 py-2 bg-indigo-700 hover:bg-indigo-800 rounded-lg font-semibold transition flex items-center gap-2'
+                },
+                activeTab === 'chat' 
+                  ? React.createElement(React.Fragment, null, '📋 로그 보기')
+                  : React.createElement(React.Fragment, null, '💬 채팅 보기')
+              )
             )
           )
-        ),
-        
-        // API 키 입력 영역
-        React.createElement(
-          'div',
-          { className: 'p-6 bg-gray-50 border-b' },
-          !configLoaded
-            ? React.createElement(
-                'div',
-                { className: 'text-center py-4' },
-                React.createElement('p', { className: 'text-gray-500' }, '⏳ config.json 로딩 중...')
-              )
-            : React.createElement(
-                React.Fragment,
-                null,
-                React.createElement(
-                  'div',
-                  { className: 'flex items-center justify-between mb-2' },
-                  React.createElement(
-                    'label',
-                    { className: 'text-sm font-semibold text-gray-700' },
-                    'API 키 설정'
-                  ),
-                  React.createElement(
-                    'button',
-                    {
-                      onClick: () => setShowKeyInput(!showKeyInput),
-                      className: 'text-sm text-indigo-600 hover:text-indigo-800'
-                    },
-                    showKeyInput ? '숨기기' : '표시'
-                  )
-                ),
-                showKeyInput &&
-                  React.createElement('input', {
-                    type: 'password',
-                    value: apiKey,
-                    onChange: (e) => setApiKey(e.target.value),
-                    placeholder: 'GMS_KEY를 입력하세요',
-                    className: 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
-                  }),
-                apiKey && apiKey !== 'YOUR_API_KEY_HERE' && !showKeyInput &&
-                  React.createElement(
-                    'p',
-                    { className: 'text-sm text-green-600' },
-                    '✓ API 키가 설정되었습니다 (config.json에서 로드됨)'
-                  )
-              )
         ),
         
         // 채팅 영역
         activeTab === 'chat' &&
           React.createElement(
             'div',
-            { className: 'h-96 overflow-y-auto p-6 space-y-4' },
+            { className: 'flex-1 overflow-y-auto p-6 space-y-4' },
             messages.filter((msg, idx) => idx >= 2).length === 0
               ? React.createElement(
                   'div',
@@ -395,7 +350,7 @@ function App() {
         activeTab === 'logs' &&
           React.createElement(
             'div',
-            { className: 'h-96 overflow-y-auto p-6 space-y-3' },
+            { className: 'flex-1 overflow-y-auto p-6 space-y-3' },
             logs.length === 0
               ? React.createElement(
                   'div',
@@ -502,26 +457,6 @@ function App() {
               '📤 전송'
             )
           )
-        )
-      ),
-      
-      // 사용 팁
-      React.createElement(
-        'div',
-        { className: 'mt-6 bg-white rounded-lg shadow p-6' },
-        React.createElement(
-          'h3',
-          { className: 'font-bold text-lg mb-3 text-gray-800' },
-          '💡 테스트 방법'
-        ),
-        React.createElement(
-          'ul',
-          { className: 'space-y-2 text-sm text-gray-600' },
-          React.createElement('li', null, '1. config.json 파일에 API 키를 설정하세요'),
-          React.createElement('li', null, '2. prompt.txt 파일에 초기화 프롬프트를 입력하세요 (선택사항)'),
-          React.createElement('li', null, '3. 첫 번째 메시지를 보내세요 (예: "내 이름은 철수야")'),
-          React.createElement('li', null, '4. 두 번째 메시지에서 이전 대화를 물어보세요 (예: "내 이름이 뭐였지?")'),
-          React.createElement('li', null, '5. AI가 이전 대화를 기억하면 성공! ✓')
         )
       )
     )
